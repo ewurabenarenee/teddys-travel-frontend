@@ -1,0 +1,61 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 349 0% 95%;
+    --foreground: 349 0% 10%;
+    --card: 349 0% 90%;
+    --card-foreground: 349 0% 15%;
+    --popover: 349 0% 95%;
+    --popover-foreground: 349 95% 10%;
+    --primary: 349 51.4% 28.2%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 349 10% 70%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 311 10% 85%;
+    --muted-foreground: 349 0% 40%;
+    --accent: 311 10% 80%;
+    --accent-foreground: 349 0% 15%;
+    --destructive: 0 50% 50%;
+    --destructive-foreground: 349 0% 90%;
+    --border: 349 20% 64%;
+    --input: 349 20% 50%;
+    --ring: 349 51.4% 28.2%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 349 10% 10%;
+    --foreground: 349 0% 90%;
+    --card: 349 0% 10%;
+    --card-foreground: 349 0% 90%;
+    --popover: 349 10% 5%;
+    --popover-foreground: 349 0% 90%;
+    --primary: 349 51.4% 28.2%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 349 10% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 311 10% 25%;
+    --muted-foreground: 349 0% 64%;
+    --accent: 311 10% 25%;
+    --accent-foreground: 349 0% 90%;
+    --destructive: 0 50% 50%;
+    --destructive-foreground: 349 0% 90%;
+    --border: 349 20% 50%;
+    --input: 349 20% 50%;
+    --ring: 349 51.4% 28.2%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Noto Sans", sans-serif;
+  }
+}
