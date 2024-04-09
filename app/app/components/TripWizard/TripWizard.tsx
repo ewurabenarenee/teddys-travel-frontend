@@ -1,4 +1,8 @@
 import { Card } from "@/components/ui/card";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import StepWizard from "react-step-wizard";
 import Step1 from "./Steps/Step1";
@@ -13,14 +17,50 @@ function TripWizard() {
     budget: "",
     currentStep: 1,
   });
+  const { data: session } = useSession();
+  const router = useRouter();
+  const { toast } = useToast();
 
   function updateTripDetails(newDetails) {
     setTripDetails((prevDetails) => ({ ...prevDetails, ...newDetails }));
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     console.log(`Trip Details ${JSON.stringify(tripDetails, null, 2)}`);
-    alert("Form Submitted! Check the console for details.");
+
+    const payload = {
+      name: tripDetails.tripName,
+      startDate: tripDetails.dateFrom,
+      endDate: tripDetails.dateTo,
+      visaRequired: false,
+      budget: tripDetails.budget,
+    };
+
+    const res = await fetch(`${process.env.API_URL}/trip`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.accessToken}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    console.log(res);
+
+    if (res.ok) {
+      toast({
+        description: "Trip has been created for you!",
+      });
+
+      router.push("/app");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+    }
   }
 
   function handleStepChange(stats) {

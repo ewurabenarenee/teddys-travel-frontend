@@ -8,12 +8,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoonIcon, SunIcon } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 
 function Navbar() {
   const { setTheme } = useTheme();
+  const { data: session } = useSession();
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: process.env.NEXTAUTH_URL });
+  };
 
   return (
     <>
@@ -28,15 +34,33 @@ function Navbar() {
             <Link className="hover:underline" href="/about">
               About
             </Link>
-            <Link className="hover:underline" href="/app">
-              Dashboard
-            </Link>
-            <Link className="hover:underline" href="/auth/signIn">
-              Sign In
-            </Link>
-            <Link className="hover:underline" href="/auth/signUp">
-              Sign Up
-            </Link>
+            {session && (
+              <Link className="hover:underline" href="/app">
+                Dashboard
+              </Link>
+            )}
+            {!session && (
+              <>
+                <Link className="hover:underline" href="/auth/signIn">
+                  Sign In
+                </Link>
+                <Link className="hover:underline" href="/auth/signUp">
+                  Sign Up
+                </Link>
+              </>
+            )}
+            {session && (
+              <>
+                <span className="text-white">{session.user?.email}</span>
+                <Link
+                  href="#"
+                  onClick={handleLogout}
+                  className="text-white hover:underline"
+                >
+                  Logout
+                </Link>
+              </>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
