@@ -1,11 +1,13 @@
+import { Trip } from "@/app/store/tripTypes";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import windmill from "../assets/windmill.jpg";
 
-function TripCard() {
+function TripCard({ trip }: { trip: Trip }) {
+  console.log(trip);
   return (
-    <Link href="/app/trip">
+    <Link href={`/app/trip/${trip._id}`}>
       <Card className="w-80 xl:w-96 h-96">
         <div className="relative h-64">
           <Image
@@ -16,8 +18,14 @@ function TripCard() {
           />
         </div>
         <div className="p-6">
-          <h1 className="mb-2 text-2xl font-bold tracking-tight">Holland</h1>
-          <p className="text-sm">Aug 23rd - Aug 27th</p>
+          <h1 className="mb-2 text-2xl font-bold tracking-tight">
+            {trip.name}
+          </h1>
+          <p className="text-sm">
+            {new Date(trip.startDate).toLocaleDateString()}
+            {" - "}
+            {new Date(trip.endDate).toLocaleDateString()}
+          </p>
         </div>
       </Card>
     </Link>

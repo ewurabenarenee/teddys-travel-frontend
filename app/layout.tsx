@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import "./globals.css";
 import NextAuthSessionProvider from "./providers/NextAuthSessionProvider";
 import { Toaster } from "@/components/ui/toaster";
+import ReduxProvider from "./providers/ReduxProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,16 +23,18 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextAuthSessionProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Navbar />
-            {children}
-            <Toaster />
-          </ThemeProvider>
+          <ReduxProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Navbar />
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </ReduxProvider>
         </NextAuthSessionProvider>
       </body>
     </html>
