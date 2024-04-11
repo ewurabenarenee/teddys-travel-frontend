@@ -44,16 +44,16 @@ export default function TripPage({ params }: { params: { id: string } }) {
     <>
       <h1 className="m-10 pt-6 justify-center text-center font-bold">
         Your Trip To {trip?.name}
-        <Button onClick={handleDelete}>Delete this trip</Button>
+        <br />
+        <Button className="mt-4" onClick={handleDelete}>
+          Delete this trip
+        </Button>
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 justify-center mt-6 ml-6 pt-6">
-        <div className="flex flex-col">{days}</div>
-        <div className="flex flex-col mt-6 mb-6">
-          <div className="h-auto max-w-full rounded-lg mb-6">
+      <div className="flex flex-col md:flex-row gap-10 m-6">
+        <div className="flex-1 md:w-3/4">{days}</div>
+        <div className="md:w-1/4">
+          <div className="h-auto max-w-full rounded-lg ">
             <BudgetCard budget={trip?.budget} />
-          </div>
-          <div className="h-auto max-w-full rounded-lg">
-            <TripDocuments />
           </div>
         </div>
       </div>
