@@ -38,7 +38,6 @@ function SignIn() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     const res = await signIn("credentials", {
       redirect: false,
       email: values.email,

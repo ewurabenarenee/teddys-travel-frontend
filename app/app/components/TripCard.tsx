@@ -5,7 +5,6 @@ import Link from "next/link";
 import windmill from "../assets/windmill.jpg";
 
 function TripCard({ trip }: { trip: Trip }) {
-  console.log(trip);
   return (
     <Link href={`/app/trip/${trip._id}`}>
       <Card className="w-80 xl:w-96 h-96">

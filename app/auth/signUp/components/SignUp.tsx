@@ -63,8 +63,6 @@ function SignUp() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-
     const payload = {
       firstName: values.firstName,
       lastName: values.lastName,

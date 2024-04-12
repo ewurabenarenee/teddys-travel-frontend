@@ -34,12 +34,10 @@ const handler = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.accessToken = user.access_token;
-        console.log(user.access_token);
         const decodedToken = JSON.parse(
           Buffer.from(user.access_token.split(".")[1], "base64").toString()
         );
         token.user = { ...decodedToken };
-        console.log(token.user);
       }
       return token;
     },

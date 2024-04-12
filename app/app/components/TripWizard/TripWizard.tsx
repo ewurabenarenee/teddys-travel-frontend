@@ -26,8 +26,6 @@ function TripWizard() {
   }
 
   async function handleSubmit() {
-    console.log(`Trip Details ${JSON.stringify(tripDetails, null, 2)}`);
-
     const payload = {
       name: tripDetails.tripName,
       startDate: tripDetails.dateFrom,
@@ -35,8 +33,7 @@ function TripWizard() {
       visaRequired: false,
       budget: tripDetails.budget,
     };
-
-    const res = await fetch(`${process.env.API_URL}/trip`, {
+    const res = await fetch(`http://localhost:3000/trip`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,8 +41,6 @@ function TripWizard() {
       },
       body: JSON.stringify(payload),
     });
-
-    console.log(res);
 
     if (res.ok) {
       toast({

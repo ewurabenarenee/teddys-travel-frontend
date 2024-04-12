@@ -21,7 +21,6 @@ export const fetchTrips = createAsyncThunk<Trip[]>(
   async () => {
     const session = await getSession();
     const token = session?.accessToken;
-    console.log(token);
     if (!token) {
       throw new Error("Access token not found");
     }
@@ -40,7 +39,6 @@ export const fetchTrip = createAsyncThunk<Trip>(
   async (tripId) => {
     const session = await getSession();
     const token = session?.accessToken;
-    console.log(token);
     if (!token) {
       throw new Error("Access token not found");
     }
@@ -59,7 +57,6 @@ export const deleteTrip = createAsyncThunk<Trip>(
   async (tripId) => {
     const session = await getSession();
     const token = session?.accessToken;
-    console.log(token);
     if (!token) {
       throw new Error("Access token not found");
     }
