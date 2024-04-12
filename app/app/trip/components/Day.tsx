@@ -11,6 +11,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -88,36 +89,63 @@ export default function Day({ day, index, tripId }: DayProps) {
           ) : error ? (
             <div>Error: {error}</div>
           ) : activities.length > 0 ? (
-            <ul>
-              {activities.map((activity) => (
-                <li key={activity._id}>
-                  <strong>{activity.name}</strong>: {activity.description}
-                  <Button onClick={() => handleDeleteActivity(activity._id)}>
-                    Delete
-                  </Button>
-                </li>
-              ))}
-            </ul>
+            <Table>
+              <TableHeader>
+                {activities.map((activity) => (
+                  <TableRow key={activity._id}>
+                    <TableHead className="">{activity.name}</TableHead>
+                    <TableHead>{activity.description}</TableHead>
+                    <TableHead className="text-right">
+                      {" "}
+                      <Button
+                        onClick={() => handleDeleteActivity(activity._id)}
+                      >
+                        Delete
+                      </Button>
+                    </TableHead>
+                  </TableRow>
+                ))}
+              </TableHeader>
+            </Table>
           ) : (
             <div>No activities found.</div>
           )}
-          <Button onClick={handleAddActivity}>Add Activity</Button>
+          <br />
+
           {isModalOpen && (
             <div>
-              <input
-                type="text"
-                placeholder="Activity Name"
-                value={activityName}
-                onChange={(e) => setActivityName(e.target.value)}
-              />
-              <textarea
-                placeholder="Activity Description"
-                value={activityDescription}
-                onChange={(e) => setActivityDescription(e.target.value)}
-              ></textarea>
-              <Button onClick={handleSubmitActivity}>Submit</Button>
+              <table>
+                <TableHeader>
+                  {/* <TableRow> */}
+                  <TableHead className="w-[100px]">
+                    {" "}
+                    <textarea
+                      placeholder="Activity Name"
+                      value={activityName}
+                      onChange={(e) => setActivityName(e.target.value)}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    {" "}
+                    <textarea
+                      placeholder="Activity Description"
+                      value={activityDescription}
+                      onChange={(e) => setActivityDescription(e.target.value)}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {" "}
+                    <Button className="m-4 p-4" onClick={handleSubmitActivity}>
+                      Submit
+                    </Button>
+                  </TableHead>
+                  {/* </TableRow> */}
+                </TableHeader>
+              </table>
             </div>
           )}
+          <br />
+          <Button onClick={handleAddActivity}>Add Activity</Button>
         </AccordionContent>
       </AccordionItem>
     </Accordion>
