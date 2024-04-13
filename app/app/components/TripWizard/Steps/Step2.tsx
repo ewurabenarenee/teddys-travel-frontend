@@ -81,5 +81,3 @@ function Step2(props) {
 }
 
 export default Step2;
-
-// z.date().min(new Date(new Date().getTime() + 24 * 60 * 60 * 1000)), { message: "Too old" });

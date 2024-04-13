@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { KeyboardEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 interface DayProps {
@@ -53,7 +53,8 @@ export default function Day({ day, index, tripId }: DayProps) {
     setIsModalOpen(true);
   };
 
-  const handleSubmitActivity = () => {
+  const handleSubmitActivity = (event) => {
+    event.preventDefault();
     dispatch(
       createActivity({
         tripId,
@@ -71,6 +72,13 @@ export default function Day({ day, index, tripId }: DayProps) {
 
   const handleDeleteActivity = (activityId: string) => {
     dispatch(deleteActivity({ tripId, dayId: day._id, activityId }));
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSubmitActivity(event as any);
+    }
   };
 
   return (
@@ -93,10 +101,9 @@ export default function Day({ day, index, tripId }: DayProps) {
               <TableHeader>
                 {activities.map((activity) => (
                   <TableRow key={activity._id}>
-                    <TableHead className="">{activity.name}</TableHead>
+                    <TableHead>{activity.name}</TableHead>
                     <TableHead>{activity.description}</TableHead>
                     <TableHead className="text-right">
-                      {" "}
                       <Button
                         onClick={() => handleDeleteActivity(activity._id)}
                       >
@@ -113,36 +120,37 @@ export default function Day({ day, index, tripId }: DayProps) {
           <br />
 
           {isModalOpen && (
-            <div>
-              <table>
-                <TableHeader>
-                  {/* <TableRow> */}
-                  <TableHead className="w-[100px]">
-                    {" "}
+            <form onSubmit={handleSubmitActivity}>
+              <Table>
+                <TableRow>
+                  <TableHead>
                     <textarea
                       placeholder="Activity Name"
                       value={activityName}
                       onChange={(e) => setActivityName(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      required
+                      className="w-full"
                     />
                   </TableHead>
                   <TableHead>
-                    {" "}
                     <textarea
                       placeholder="Activity Description"
                       value={activityDescription}
                       onChange={(e) => setActivityDescription(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      required
+                      className="w-full"
                     />
                   </TableHead>
                   <TableHead className="text-right">
-                    {" "}
-                    <Button className="m-4 p-4" onClick={handleSubmitActivity}>
+                    <Button type="submit" className="m-4 p-4">
                       Submit
                     </Button>
                   </TableHead>
-                  {/* </TableRow> */}
-                </TableHeader>
-              </table>
-            </div>
+                </TableRow>
+              </Table>
+            </form>
           )}
           <br />
           <Button onClick={handleAddActivity}>Add Activity</Button>

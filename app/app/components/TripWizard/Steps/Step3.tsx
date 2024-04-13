@@ -29,8 +29,7 @@ function Step3(props) {
   });
 
   function onSubmit(values) {
-    props.updateTripDetails({ budget: values.budget });
-    props.onSubmit();
+    props.onSubmit(values.budget);
   }
 
   return (
@@ -63,9 +62,9 @@ function Step3(props) {
             <Button
               type="submit"
               className="mt-4"
-              disabled={!form.watch("budget")}
+              disabled={!form.watch("budget") || props.loading}
             >
-              Submit
+              {props.loading ? "Submitting..." : "Submit"}
             </Button>
           </div>
         </form>

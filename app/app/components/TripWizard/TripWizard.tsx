@@ -1,9 +1,11 @@
+import { RootState } from "@/app/store/store";
+import { createTrip } from "@/app/store/tripSlice";
 import { Card } from "@/components/ui/card";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import StepWizard from "react-step-wizard";
 import Step1 from "./Steps/Step1";
 import Step2 from "./Steps/Step2";
@@ -14,41 +16,36 @@ function TripWizard() {
     tripName: "",
     dateFrom: "",
     dateTo: "",
-    budget: "",
+    budget: 0,
     currentStep: 1,
   });
-  const { data: session } = useSession();
+
+  const dispatch = useDispatch();
   const router = useRouter();
+  const loading = useSelector((state: RootState) => state.trip.loading);
   const { toast } = useToast();
 
   function updateTripDetails(newDetails) {
     setTripDetails((prevDetails) => ({ ...prevDetails, ...newDetails }));
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(budget) {
     const payload = {
       name: tripDetails.tripName,
       startDate: tripDetails.dateFrom,
       endDate: tripDetails.dateTo,
       visaRequired: false,
-      budget: tripDetails.budget,
+      budget: budget,
     };
-    const res = await fetch(`http://localhost:3000/trip`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.accessToken}`,
-      },
-      body: JSON.stringify(payload),
-    });
 
-    if (res.ok) {
+    try {
+      await dispatch(createTrip(payload)).unwrap();
       toast({
         description: "Trip has been created for you!",
       });
-
       router.push("/app");
-    } else {
+    } catch (error) {
+      console.error("Error creating trip:", error);
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
@@ -77,7 +74,8 @@ function TripWizard() {
           <Step3
             tripDetails={tripDetails}
             updateTripDetails={updateTripDetails}
-            onSubmit={handleSubmit}
+            onSubmit={(budget) => handleSubmit(budget)}
+            loading={loading}
           />
         </StepWizard>
         <div className="flex justify-center space-x-2 mt-8">
