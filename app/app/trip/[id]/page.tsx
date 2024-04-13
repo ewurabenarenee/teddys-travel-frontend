@@ -52,7 +52,7 @@ export default function TripPage({ params }: { params: { id: string } }) {
         </div>
         <div className="md:w-1/4">
           <div className="h-auto max-w-full rounded-lg ">
-            <BudgetCard budget={trip?.budget} />
+            <BudgetCard budget={trip?.budget} tripId={params.id} />
           </div>
         </div>
       </div>

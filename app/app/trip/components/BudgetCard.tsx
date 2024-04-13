@@ -1,7 +1,63 @@
+import { createExpense, fetchExpenses } from "@/app/store/expenseSlice";
+import { AppDispatch, RootState } from "@/app/store/store";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-function BudgetCard({ budget }: { budget: number | undefined }) {
+function BudgetCard({
+  budget,
+  tripId,
+}: {
+  budget: number | undefined;
+  tripId: string;
+}) {
+  const dispatch = useDispatch<AppDispatch>();
+  const expenses = useSelector(
+    (state: RootState) => state.expense.expenses || []
+  );
+  const loading = useSelector((state: RootState) => state.expense.loading);
+  const error = useSelector((state: RootState) => state.expense.error);
+  const [formData, setFormData] = useState({
+    description: "",
+    amount: 0,
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchExpenses(tripId));
+  }, [dispatch, tripId]);
+
+  function handleAddExpense(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    dispatch(
+      createExpense({
+        tripId: tripId,
+        expenseData: formData,
+      })
+    );
+    setFormData({
+      description: "",
+      amount: 0,
+    });
+    setIsModalOpen(false);
+  }
+
+  function handleChange(
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: name === "amount" ? parseFloat(value) : value,
+    }));
+  }
+
+  function calculateRemainingBudget() {
+    const totalExpenses = expenses.reduce((acc, curr) => acc + curr.amount, 0);
+    return budget ? budget - totalExpenses : 0;
+  }
+
   return (
     <Card className="max-w-sm mb-2 cursor-pointer relative">
       <div className="relative">
@@ -13,20 +69,62 @@ function BudgetCard({ budget }: { budget: number | undefined }) {
           <span>{budget}</span>
         </div>
         <hr className="my-2" />
-        <div className="flex justify-between m-2">
-          <span>Horsebackriding</span>
-          <span>-300</span>
-        </div>
-        <div className="flex justify-between m-2">
-          <span>Museum</span>
-          <span>1000</span>
-        </div>
+        {expenses.length === 0 ? (
+          <div className="flex justify-between m-2">
+            <span>No expenses found!</span>
+          </div>
+        ) : (
+          expenses.map((element) => (
+            <div className="flex justify-between m-2" key={element.id}>
+              <span>{element.description}</span>
+              <span>- {element.amount}</span>
+            </div>
+          ))
+        )}
         <hr className="my-2" />
         <div className="flex justify-between m-2">
           <span>Budget left</span>
-          <span>7500</span>
+          <span>{calculateRemainingBudget()}</span>
         </div>
-        <Button className="bottom-2 left-2 m-4 px-4 py-2">Add expense</Button>
+        {isModalOpen && (
+          <form onSubmit={handleAddExpense} className="m-2">
+            <textarea
+              placeholder="Description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            />
+
+            <input
+              type="number"
+              placeholder="Amount"
+              name="amount"
+              value={formData.amount}
+              onChange={handleChange}
+              className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            />
+            <div className="mt-4">
+              <Button type="submit" className="mr-2 px-4 py-2">
+                Add Expense
+              </Button>
+              <Button
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2"
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        )}
+        {!isModalOpen && (
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="m-2 px-4 py-2"
+          >
+            Add Expense
+          </Button>
+        )}
       </div>
     </Card>
   );
