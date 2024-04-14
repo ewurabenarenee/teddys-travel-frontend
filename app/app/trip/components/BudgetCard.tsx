@@ -1,4 +1,8 @@
-import { createExpense, fetchExpenses } from "@/app/store/expenseSlice";
+import {
+  createExpense,
+  deleteExpense,
+  fetchExpenses,
+} from "@/app/store/expenseSlice";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -23,6 +27,8 @@ function BudgetCard({
     amount: 0,
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRemoveMode, setIsRemoveMode] = useState(false);
+  const [selectedExpenses, setSelectedExpenses] = useState<string[]>([]);
 
   useEffect(() => {
     dispatch(fetchExpenses(tripId));
@@ -58,6 +64,28 @@ function BudgetCard({
     return budget ? budget - totalExpenses : 0;
   }
 
+  function handleRemoveExpense() {
+    if (isRemoveMode) {
+      for (const expenseId of selectedExpenses) {
+        dispatch(deleteExpense({ tripId, expenseId }));
+      }
+      setSelectedExpenses([]);
+    }
+    setIsRemoveMode(!isRemoveMode);
+  }
+
+  function handleExpenseSelection(expense) {
+    if (selectedExpenses.includes(expense._id)) {
+      const updatedSelectedExpenses = selectedExpenses.filter(
+        (id) => id !== expense._id
+      );
+      setSelectedExpenses(updatedSelectedExpenses);
+    } else {
+      const updatedSelectedExpenses = [...selectedExpenses, expense._id];
+      setSelectedExpenses(updatedSelectedExpenses);
+    }
+  }
+
   return (
     <Card className="max-w-sm mb-2 cursor-pointer relative">
       <div className="relative">
@@ -75,8 +103,18 @@ function BudgetCard({
           </div>
         ) : (
           expenses.map((element) => (
-            <div className="flex justify-between m-2" key={element.id}>
-              <span>{element.description}</span>
+            <div className="flex justify-between m-2" key={element._id}>
+              <span>
+                {isRemoveMode && (
+                  <input
+                    type="checkbox"
+                    checked={selectedExpenses.includes(element._id)}
+                    onChange={() => handleExpenseSelection(element)}
+                    className="mr-2"
+                  />
+                )}{" "}
+                {element.description}
+              </span>
               <span>- {element.amount}</span>
             </div>
           ))
@@ -118,12 +156,17 @@ function BudgetCard({
           </form>
         )}
         {!isModalOpen && (
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            className="m-2 px-4 py-2"
-          >
-            Add Expense
-          </Button>
+          <>
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              className="m-2 px-4 py-2"
+            >
+              Add Expense
+            </Button>
+            <Button onClick={handleRemoveExpense} className="m-2 px-4 py-2">
+              {isRemoveMode ? "Delete Selected" : "Remove Expense"}
+            </Button>
+          </>
         )}
       </div>
     </Card>
