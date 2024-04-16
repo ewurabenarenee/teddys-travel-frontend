@@ -2,6 +2,7 @@ import {
   createActivity,
   deleteActivity,
   fetchActivities,
+  updateActivity,
 } from "@/app/store/activitySlice";
 import { AppDispatch, RootState } from "@/app/store/store";
 import {
@@ -12,6 +13,8 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { KeyboardEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -35,6 +38,9 @@ export default function Day({ day, index, tripId }: DayProps) {
   const [activityName, setActivityName] = useState("");
   const [activityDescription, setActivityDescription] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
+  const [editingActivityId, setEditingActivityId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     if (isExpanded) {
@@ -51,27 +57,52 @@ export default function Day({ day, index, tripId }: DayProps) {
 
   const handleAddActivity = () => {
     setIsModalOpen(true);
-  };
-
-  const handleSubmitActivity = (event) => {
-    event.preventDefault();
-    dispatch(
-      createActivity({
-        tripId,
-        dayId: day._id,
-        activityData: {
-          name: activityName,
-          description: activityDescription,
-        },
-      })
-    );
-    setIsModalOpen(false);
+    setEditingActivityId(null);
     setActivityName("");
     setActivityDescription("");
   };
 
+  const handleSubmitActivity = (event) => {
+    event.preventDefault();
+    if (editingActivityId) {
+      dispatch(
+        updateActivity({
+          tripId,
+          dayId: day._id,
+          activityId: editingActivityId,
+          activityData: {
+            name: activityName,
+            description: activityDescription,
+          },
+        })
+      );
+    } else {
+      dispatch(
+        createActivity({
+          tripId,
+          dayId: day._id,
+          activityData: {
+            name: activityName,
+            description: activityDescription,
+          },
+        })
+      );
+    }
+    setIsModalOpen(false);
+    setActivityName("");
+    setActivityDescription("");
+    setEditingActivityId(null);
+  };
+
   const handleDeleteActivity = (activityId: string) => {
     dispatch(deleteActivity({ tripId, dayId: day._id, activityId }));
+  };
+
+  const handleEditActivity = (activity: Activity) => {
+    setIsModalOpen(true);
+    setEditingActivityId(activity._id);
+    setActivityName(activity.name);
+    setActivityDescription(activity.description);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -104,11 +135,16 @@ export default function Day({ day, index, tripId }: DayProps) {
                     <TableHead>{activity.name}</TableHead>
                     <TableHead>{activity.description}</TableHead>
                     <TableHead className="text-right">
-                      <Button
-                        onClick={() => handleDeleteActivity(activity._id)}
-                      >
-                        Delete
-                      </Button>
+                      <div>
+                        <FontAwesomeIcon
+                          onClick={() => handleEditActivity(activity)}
+                          icon={faEdit}
+                        />{" "}
+                        <FontAwesomeIcon
+                          onClick={() => handleDeleteActivity(activity._id)}
+                          icon={faTrashAlt}
+                        />{" "}
+                      </div>
                     </TableHead>
                   </TableRow>
                 ))}
@@ -118,7 +154,6 @@ export default function Day({ day, index, tripId }: DayProps) {
             <div>No activities found.</div>
           )}
           <br />
-
           {isModalOpen && (
             <form onSubmit={handleSubmitActivity}>
               <Table>
@@ -145,7 +180,7 @@ export default function Day({ day, index, tripId }: DayProps) {
                   </TableHead>
                   <TableHead className="text-right">
                     <Button type="submit" className="m-4 p-4">
-                      Submit
+                      {editingActivityId ? "Update" : "Submit"}
                     </Button>
                   </TableHead>
                 </TableRow>

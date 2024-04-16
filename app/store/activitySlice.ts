@@ -64,6 +64,38 @@ export const createActivity = createAsyncThunk<
   return { dayId, activity: data };
 });
 
+export const updateActivity = createAsyncThunk<
+  { dayId: string; activity: Activity },
+  {
+    tripId: string;
+    dayId: string;
+    activityId: string;
+    activityData: Partial<Activity>;
+  }
+>(
+  "activity/updateActivity",
+  async ({ tripId, dayId, activityId, activityData }) => {
+    const session = await getSession();
+    const token = session?.accessToken;
+    if (!token) {
+      throw new Error("Access token not found");
+    }
+    const response = await fetch(
+      `http://localhost:3000/trip/${tripId}/day/${dayId}/activity/${activityId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(activityData),
+      }
+    );
+    const data = await response.json();
+    return { dayId, activity: data };
+  }
+);
+
 export const deleteActivity = createAsyncThunk<
   void,
   { tripId: string; dayId: string; activityId: string }
@@ -126,6 +158,30 @@ const activitySlice = createSlice({
         }
       )
       .addCase(createActivity.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Something went wrong";
+      })
+      .addCase(updateActivity.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        updateActivity.fulfilled,
+        (
+          state,
+          action: PayloadAction<{ dayId: string; activity: Activity }>
+        ) => {
+          state.loading = false;
+          const { dayId, activity } = action.payload;
+          const activityIndex = state.activitiesByDay[dayId].findIndex(
+            (a) => a._id === activity._id
+          );
+          if (activityIndex !== -1) {
+            state.activitiesByDay[dayId][activityIndex] = activity;
+          }
+        }
+      )
+      .addCase(updateActivity.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Something went wrong";
       })
