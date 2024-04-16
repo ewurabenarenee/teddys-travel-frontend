@@ -17,6 +17,30 @@ const initialState: TripState = {
   error: null,
 };
 
+export const updateTripImage = createAsyncThunk<
+  Trip,
+  { tripId: string; file: File }
+>("trip/updateTripImage", async ({ tripId, file }) => {
+  const session = await getSession();
+  const token = session?.accessToken;
+  if (!token) {
+    throw new Error("Access token not found");
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(`http://localhost:3000/trip/${tripId}/image`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+  const data = await response.json();
+  return data;
+});
+
 export const fetchTrips = createAsyncThunk<Trip[]>(
   "trip/fetchTrips",
   async () => {
@@ -177,6 +201,18 @@ const tripSlice = createSlice({
         state.trips.push(action.payload);
       })
       .addCase(createTrip.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Something went wrong";
+      })
+      .addCase(updateTripImage.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateTripImage.fulfilled, (state, action) => {
+        state.loading = false;
+        state.trip = action.payload;
+      })
+      .addCase(updateTripImage.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Something went wrong";
       });

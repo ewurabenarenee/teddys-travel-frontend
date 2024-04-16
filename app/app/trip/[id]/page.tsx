@@ -1,7 +1,12 @@
 "use client";
 
 import { AppDispatch, RootState } from "@/app/store/store";
-import { deleteTrip, fetchTrip, updateTrip } from "@/app/store/tripSlice";
+import {
+  deleteTrip,
+  fetchTrip,
+  updateTrip,
+  updateTripImage,
+} from "@/app/store/tripSlice";
 import { Button } from "@/components/ui/button";
 import { faCheck, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -39,6 +44,15 @@ export default function TripPage({ params }: { params: { id: string } }) {
     dispatch(deleteTrip(params.id));
     router.push("/app");
   }
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      dispatch(updateTripImage({ tripId: params.id, file }));
+    }
+  };
 
   function handleSaveName() {
     if (newTripName.trim() !== "") {
@@ -106,6 +120,9 @@ export default function TripPage({ params }: { params: { id: string } }) {
         <div className="md:w-1/4">
           <div className="h-auto max-w-full rounded-lg ">
             <BudgetCard budget={trip?.budget} tripId={params.id} />
+          </div>
+          <div>
+            <input type="file" accept="image/*" onChange={handleImageUpload} />
           </div>
         </div>
       </div>

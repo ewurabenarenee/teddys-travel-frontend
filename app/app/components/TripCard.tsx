@@ -2,7 +2,7 @@ import { Trip } from "@/app/store/tripTypes";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
-import windmill from "../assets/windmill.jpg";
+import defaultTripImage from "../assets/defaultTripImage.jpg";
 
 function TripCard({ trip }: { trip: Trip }) {
   return (
@@ -11,8 +11,8 @@ function TripCard({ trip }: { trip: Trip }) {
         <div className="relative h-64">
           <Image
             className="rounded-t-lg object-cover w-full h-full"
-            src={windmill}
-            alt="windmill"
+            src={trip.imageUrl || defaultTripImage}
+            alt="Trip Image"
             fill
           />
         </div>
