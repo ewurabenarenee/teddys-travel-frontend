@@ -7,14 +7,34 @@ export async function AboutPage() {
   return (
     <main className="">
       <p className="m-10">
-        Teddy's Travel is a service which allows you to plan and oranize your
-        trips. It helps you with the planning as it offers features for users to
-        create, manage and share their travel plans. Some of these features
-        includes a trip dashboard, trip creation and management tools, a
-        detailed trip view, and additional features like weather forcasts and
-        sharing options. Sign up to discover our splendid holiday ideas and
-        destinations ideal for your travels as we have numerous activities and
-        adventures line up for you to make your trip a memorable one.
+        Welcome to Teddy's Travel, your premier destination service dedicated to
+        flawless trip planning and organization. Whether it's a weekend escape
+        or an adventurous journey, We have got you covered as our platform
+        provide features for users to create, manage and share their travel
+        plans. Experience the convenience of our trip dashboard, where you can
+        see every aspect of your journey.
+        <br />
+        <br />
+        Our trip creation and management tools helps you to tailor your
+        itinerary to perfection. We offer a comprehensive trip view which is
+        enchanced by features like calender intergretion, budget tracking and a
+        real time weather forecasts to help you to stay informed.
+        <br />
+        <br />
+        Teddy's Travel makes it easy to connect and engage with like-minded
+        adventurers therefore we've also incoperated sharing options into our
+        platform to assist users to share their trips and connect with fellow
+        travellers.
+        <br />
+        <br />
+        Sign up now and unlock a world of splendid holiday ideas and
+        destinations tailored to your preferences to make your trip a memorable
+        one.
+        <br />
+        <br />
+        <h4 className="italic">
+          <b>"Teddy's Travel, your ultimate trip-planning companion".</b>
+        </h4>
       </p>
 
       <h1 className="mx-10 mb-4 text-4xl text-center italic">App Features</h1>
@@ -44,7 +64,7 @@ export async function AboutPage() {
                 alt="Budget"
               />
               <CardTitle className="my-2">Budget</CardTitle>
-              Lets help you with an estimated budget for your trip
+              Let's help you with an estimated budget for your trip
             </div>
           </Card>
 
@@ -59,8 +79,11 @@ export async function AboutPage() {
                 alt="Weather"
               />
               <CardTitle className="my-2">Weather</CardTitle>
-              We got you covered with all the weather forecast pertaining to
-              your trip
+              We've got you covered with all the weather forecast details
+              tailored specifically to your trip. Whether you're planning a
+              weekend getaway or a month-long adventure, we'll provide you with
+              up-to-date forecasts so you can pack accordingly and make the most
+              of your journey.
             </div>
           </Card>
         </div>
