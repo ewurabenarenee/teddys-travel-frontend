@@ -17,18 +17,25 @@ const formSchema = z.object({
   tripName: z.string().min(2, {
     message: "Trip name must be at least 2 letters.",
   }),
+  places: z
+    .string()
+    .transform((places) => places.split(",").map((dest) => dest.trim())),
 });
 
 function Step1(props) {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       tripName: "",
+      places: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    props.updateTripDetails({ tripName: values.tripName });
+  function onSubmit(values) {
+    props.updateTripDetails({
+      tripName: values.tripName,
+      places: values.places,
+    });
     props.nextStep();
   }
 
@@ -50,10 +57,25 @@ function Step1(props) {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="places"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  What are some of the places you'll be visiting?
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="Kingston, Montego Bay" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button
             className="mt-4"
             type="submit"
-            disabled={!form.watch("tripName")}
+            disabled={!form.watch("tripName") || !form.watch("places")}
           >
             Next
           </Button>

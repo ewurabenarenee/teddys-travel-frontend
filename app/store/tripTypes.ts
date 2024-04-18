@@ -8,4 +8,5 @@ export interface Trip {
   days: string[];
   expenses: string[];
   budget: number;
+  places: string[];
 }

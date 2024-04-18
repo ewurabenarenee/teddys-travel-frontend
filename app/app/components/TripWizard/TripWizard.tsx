@@ -14,6 +14,7 @@ import Step3 from "./Steps/Step3";
 function TripWizard() {
   const [tripDetails, setTripDetails] = useState({
     tripName: "",
+    places: [],
     dateFrom: "",
     dateTo: "",
     budget: 0,
@@ -32,6 +33,7 @@ function TripWizard() {
   async function handleSubmit(budget) {
     const payload = {
       name: tripDetails.tripName,
+      places: tripDetails.places,
       startDate: tripDetails.dateFrom,
       endDate: tripDetails.dateTo,
       visaRequired: false,

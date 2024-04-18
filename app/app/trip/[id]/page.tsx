@@ -15,6 +15,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BudgetCard from "../components/BudgetCard";
 import Day from "../components/Day";
+import WeatherCard from "../components/WeatherCard";
 
 export default function TripPage({ params }: { params: { id: string } }) {
   const dispatch = useDispatch<AppDispatch>();
@@ -118,9 +119,8 @@ export default function TripPage({ params }: { params: { id: string } }) {
           ))}
         </div>
         <div className="md:w-1/4">
-          <div className="h-auto max-w-full rounded-lg ">
-            <BudgetCard budget={trip?.budget} tripId={params.id} />
-          </div>
+          <WeatherCard places={trip?.places || []} />
+          <BudgetCard budget={trip?.budget} tripId={params.id} />
           <div>
             <input type="file" accept="image/*" onChange={handleImageUpload} />
           </div>
