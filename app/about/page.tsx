@@ -38,8 +38,8 @@ export async function AboutPage() {
       </p>
 
       <h1 className="mx-10 mb-4 text-4xl text-center italic">App Features</h1>
-      <div className="flex justify-center items-center mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 m-4">
+      <div className="flex justify-center mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 m-4">
           <Card className="max-w-sm">
             <div className="p-6">
               <Image
@@ -84,6 +84,20 @@ export async function AboutPage() {
               weekend getaway or a month-long adventure, we'll provide you with
               up-to-date forecasts so you can pack accordingly and make the most
               of your journey.
+            </div>
+          </Card>
+
+          <Card className="max-w-sm">
+            <div className="p-6">
+              <Image
+                className="rounded-t-lg"
+                src="/share.jpg"
+                width={1000}
+                height={100}
+                alt="Share"
+              />
+              <CardTitle className="my-2">Share</CardTitle>
+              Share your trip with your friends and family via email.
             </div>
           </Card>
         </div>
