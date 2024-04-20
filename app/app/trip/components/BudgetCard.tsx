@@ -6,8 +6,31 @@ import {
 import { AppDispatch, RootState } from "@/app/store/store";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { z } from "zod";
+
+const expenseSchema = z.object({
+  description: z.string().min(1, { message: "Description is required." }),
+  amount: z.preprocess((e) => {
+    if (typeof e === "string") return parseFloat(e);
+    return e;
+  }, z.number().min(0, { message: "Amount must be a positive number." })),
+});
+
+type ExpenseFormData = z.infer<typeof expenseSchema>;
 
 function BudgetCard({
   budget,
@@ -22,42 +45,32 @@ function BudgetCard({
   );
   const loading = useSelector((state: RootState) => state.expense.loading);
   const error = useSelector((state: RootState) => state.expense.error);
-  const [formData, setFormData] = useState({
-    description: "",
-    amount: 0,
-  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRemoveMode, setIsRemoveMode] = useState(false);
   const [selectedExpenses, setSelectedExpenses] = useState<string[]>([]);
+
+  const form = useForm<ExpenseFormData>({
+    resolver: zodResolver(expenseSchema),
+    defaultValues: {
+      description: "",
+      amount: 0,
+    },
+  });
 
   useEffect(() => {
     dispatch(fetchExpenses(tripId));
   }, [dispatch, tripId]);
 
-  function handleAddExpense(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const onSubmit = (data: ExpenseFormData) => {
     dispatch(
       createExpense({
         tripId: tripId,
-        expenseData: formData,
+        expenseData: data,
       })
     );
-    setFormData({
-      description: "",
-      amount: 0,
-    });
+    form.reset();
     setIsModalOpen(false);
-  }
-
-  function handleChange(
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: name === "amount" ? parseFloat(value) : value,
-    }));
-  }
+  };
 
   function calculateRemainingBudget() {
     const totalExpenses = expenses.reduce((acc, curr) => acc + curr.amount, 0);
@@ -103,17 +116,22 @@ function BudgetCard({
           </div>
         ) : (
           expenses.map((element) => (
-            <div className="flex justify-between m-2" key={element._id}>
-              <span>
+            <div
+              className="flex items-center justify-between m-2"
+              key={element._id}
+            >
+              <span className="flex items-center">
                 {isRemoveMode && (
-                  <input
-                    type="checkbox"
-                    checked={selectedExpenses.includes(element._id)}
-                    onChange={() => handleExpenseSelection(element)}
-                    className="mr-2"
-                  />
-                )}{" "}
-                {element.description}
+                  <div className="flex items-center w-5 mr-2">
+                    <Checkbox
+                      checked={selectedExpenses.includes(element._id)}
+                      onCheckedChange={() => handleExpenseSelection(element)}
+                    />
+                  </div>
+                )}
+                <span className={`${isRemoveMode ? "" : "flex-1"}`}>
+                  {element.description}
+                </span>
               </span>
               <span>- {element.amount}</span>
             </div>
@@ -125,35 +143,47 @@ function BudgetCard({
           <span>{calculateRemainingBudget()}</span>
         </div>
         {isModalOpen && (
-          <form onSubmit={handleAddExpense} className="m-2">
-            <textarea
-              placeholder="Description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-
-            <input
-              type="number"
-              placeholder="Amount"
-              name="amount"
-              value={formData.amount}
-              onChange={handleChange}
-              className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-            <div className="mt-4">
-              <Button type="submit" className="mr-2 px-4 py-2">
-                Add Expense
-              </Button>
-              <Button
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2"
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="m-2">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Description" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amount</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="Amount" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="mt-4">
+                <Button type="submit" className="mr-2 px-4 py-2">
+                  Add Expense
+                </Button>
+                <Button
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </Form>
         )}
         {!isModalOpen && (
           <>

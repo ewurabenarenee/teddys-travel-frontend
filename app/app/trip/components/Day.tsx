@@ -15,8 +15,20 @@ import { Button } from "@/components/ui/button";
 import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { KeyboardEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 interface DayProps {
   day: {
@@ -27,6 +39,15 @@ interface DayProps {
   tripId: string;
 }
 
+const activitySchema = z.object({
+  name: z.string().min(1, { message: "Activity name is required." }),
+  description: z
+    .string()
+    .min(1, { message: "Activity description is required." }),
+});
+
+type ActivityFormData = z.infer<typeof activitySchema>;
+
 export default function Day({ day, index, tripId }: DayProps) {
   const dispatch = useDispatch<AppDispatch>();
   const activities = useSelector(
@@ -35,12 +56,18 @@ export default function Day({ day, index, tripId }: DayProps) {
   const loading = useSelector((state: RootState) => state.activity.loading);
   const error = useSelector((state: RootState) => state.activity.error);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activityName, setActivityName] = useState("");
-  const [activityDescription, setActivityDescription] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [editingActivityId, setEditingActivityId] = useState<string | null>(
     null
   );
+
+  const form = useForm<ActivityFormData>({
+    resolver: zodResolver(activitySchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
+  });
 
   useEffect(() => {
     if (isExpanded) {
@@ -58,22 +85,17 @@ export default function Day({ day, index, tripId }: DayProps) {
   const handleAddActivity = () => {
     setIsModalOpen(true);
     setEditingActivityId(null);
-    setActivityName("");
-    setActivityDescription("");
+    form.reset();
   };
 
-  const handleSubmitActivity = (event) => {
-    event.preventDefault();
+  const onSubmit = (data: ActivityFormData) => {
     if (editingActivityId) {
       dispatch(
         updateActivity({
           tripId,
           dayId: day._id,
           activityId: editingActivityId,
-          activityData: {
-            name: activityName,
-            description: activityDescription,
-          },
+          activityData: data,
         })
       );
     } else {
@@ -81,16 +103,12 @@ export default function Day({ day, index, tripId }: DayProps) {
         createActivity({
           tripId,
           dayId: day._id,
-          activityData: {
-            name: activityName,
-            description: activityDescription,
-          },
+          activityData: data,
         })
       );
     }
     setIsModalOpen(false);
-    setActivityName("");
-    setActivityDescription("");
+    form.reset();
     setEditingActivityId(null);
   };
 
@@ -101,15 +119,8 @@ export default function Day({ day, index, tripId }: DayProps) {
   const handleEditActivity = (activity: Activity) => {
     setIsModalOpen(true);
     setEditingActivityId(activity._id);
-    setActivityName(activity.name);
-    setActivityDescription(activity.description);
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      handleSubmitActivity(event as any);
-    }
+    form.setValue("name", activity.name);
+    form.setValue("description", activity.description);
   };
 
   return (
@@ -155,37 +166,52 @@ export default function Day({ day, index, tripId }: DayProps) {
           )}
           <br />
           {isModalOpen && (
-            <form onSubmit={handleSubmitActivity}>
-              <Table>
-                <TableRow>
-                  <TableHead>
-                    <textarea
-                      placeholder="Activity Name"
-                      value={activityName}
-                      onChange={(e) => setActivityName(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      required
-                      className="w-full"
-                    />
-                  </TableHead>
-                  <TableHead>
-                    <textarea
-                      placeholder="Activity Description"
-                      value={activityDescription}
-                      onChange={(e) => setActivityDescription(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      required
-                      className="w-full"
-                    />
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <Button type="submit" className="m-4 p-4">
-                      {editingActivityId ? "Update" : "Submit"}
-                    </Button>
-                  </TableHead>
-                </TableRow>
-              </Table>
-            </form>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <Table>
+                  <TableRow>
+                    <TableHead>
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Activity Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Activity Name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </TableHead>
+                    <TableHead>
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Activity Description</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Activity Description"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </TableHead>
+                    <TableHead className="text-right">
+                      <Button type="submit" className="m-4 p-4">
+                        {editingActivityId ? "Update" : "Submit"}
+                      </Button>
+                    </TableHead>
+                  </TableRow>
+                </Table>
+              </form>
+            </Form>
           )}
           <br />
           <Button onClick={handleAddActivity}>Add Activity</Button>

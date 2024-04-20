@@ -138,6 +138,28 @@ export const createTrip = createAsyncThunk<Trip, Partial<Trip>>(
   }
 );
 
+export const shareTrip = createAsyncThunk<
+  void,
+  { tripId: string; recipientName: string; recipientEmail: string }
+>("trip/shareTrip", async ({ tripId, recipientName, recipientEmail }) => {
+  const session = await getSession();
+  const token = session?.accessToken;
+  if (!token) {
+    throw new Error("Access token not found");
+  }
+  const response = await fetch(`http://localhost:3000/trip/${tripId}/share`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ recipientName, recipientEmail }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to share the trip");
+  }
+});
+
 const tripSlice = createSlice({
   name: "trip",
   initialState,
@@ -213,6 +235,17 @@ const tripSlice = createSlice({
         state.trip = action.payload;
       })
       .addCase(updateTripImage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Something went wrong";
+      })
+      .addCase(shareTrip.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(shareTrip.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(shareTrip.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Something went wrong";
       });
