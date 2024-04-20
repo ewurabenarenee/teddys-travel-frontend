@@ -17,7 +17,7 @@ export async function AboutPage() {
         <br />
         Our trip creation and management tools helps you to tailor your
         itinerary to perfection. We offer a comprehensive trip view which is
-        enchanced by features like calender intergretion, budget tracking and a
+        enchanced by features like calendar intergretion, budget tracking and a
         real time weather forecasts to help you to stay informed.
         <br />
         <br />
@@ -47,10 +47,10 @@ export async function AboutPage() {
                 src="/calendar.jpg"
                 width={1000}
                 height={100}
-                alt="calender"
+                alt="calendar"
               />
               <CardTitle className="my-2">Calendar</CardTitle>
-              Organize your trip with our calender
+              Organize your trip with our calendar.
             </div>
           </Card>
 
@@ -64,13 +64,12 @@ export async function AboutPage() {
                 alt="Budget"
               />
               <CardTitle className="my-2">Budget</CardTitle>
-              Let's help you with an estimated budget for your trip
+              Let's help you with an estimated budget for your trip.
             </div>
           </Card>
 
           <Card className="max-w-sm">
             <div className="p-6">
-              {/* <Image className="rounded-t-lg" src={weather} alt="weather" /> */}
               <Image
                 className="rounded-t-lg"
                 src="/weather.jpg"
