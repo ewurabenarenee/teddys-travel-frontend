@@ -116,6 +116,46 @@ export const deleteActivity = createAsyncThunk<
   );
 });
 
+export const moveActivityUp = createAsyncThunk<
+  void,
+  { tripId: string; dayId: string; activityId: string }
+>("activity/moveActivityUp", async ({ tripId, dayId, activityId }) => {
+  const session = await getSession();
+  const token = session?.accessToken;
+  if (!token) {
+    throw new Error("Access token not found");
+  }
+  await fetch(
+    `http://localhost:3000/trip/${tripId}/day/${dayId}/activity/${activityId}/move-up`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+});
+
+export const moveActivityDown = createAsyncThunk<
+  void,
+  { tripId: string; dayId: string; activityId: string }
+>("activity/moveActivityDown", async ({ tripId, dayId, activityId }) => {
+  const session = await getSession();
+  const token = session?.accessToken;
+  if (!token) {
+    throw new Error("Access token not found");
+  }
+  await fetch(
+    `http://localhost:3000/trip/${tripId}/day/${dayId}/activity/${activityId}/move-down`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+});
+
 const activitySlice = createSlice({
   name: "activity",
   initialState,
@@ -197,6 +237,42 @@ const activitySlice = createSlice({
         );
       })
       .addCase(deleteActivity.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Something went wrong";
+      })
+      .addCase(moveActivityUp.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(moveActivityUp.fulfilled, (state, action) => {
+        state.loading = false;
+        const { dayId, activityId } = action.meta.arg;
+        const activities = state.activitiesByDay[dayId];
+        const activityIndex = activities.findIndex((a) => a._id === activityId);
+        if (activityIndex > 0) {
+          const temp = activities[activityIndex];
+          activities[activityIndex] = activities[activityIndex - 1];
+          activities[activityIndex - 1] = temp;
+        }
+      })
+      .addCase(moveActivityUp.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Something went wrong";
+      })
+      .addCase(moveActivityDown.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(moveActivityDown.fulfilled, (state, action) => {
+        state.loading = false;
+        const { dayId, activityId } = action.meta.arg;
+        const activities = state.activitiesByDay[dayId];
+        const activityIndex = activities.findIndex((a) => a._id === activityId);
+        if (activityIndex < activities.length - 1) {
+          const temp = activities[activityIndex];
+          activities[activityIndex] = activities[activityIndex + 1];
+          activities[activityIndex + 1] = temp;
+        }
+      })
+      .addCase(moveActivityDown.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Something went wrong";
       });

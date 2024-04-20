@@ -2,6 +2,8 @@ import {
   createActivity,
   deleteActivity,
   fetchActivities,
+  moveActivityDown,
+  moveActivityUp,
   updateActivity,
 } from "@/app/store/activitySlice";
 import { AppDispatch, RootState } from "@/app/store/store";
@@ -12,14 +14,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -29,6 +23,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  faCaretDown,
+  faCaretUp,
+  faEdit,
+  faTrashAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { z } from "zod";
 
 interface DayProps {
   day: {
@@ -82,13 +89,13 @@ export default function Day({ day, index, tripId }: DayProps) {
     day: "numeric",
   });
 
-  const handleAddActivity = () => {
+  function handleAddActivity() {
     setIsModalOpen(true);
     setEditingActivityId(null);
     form.reset();
-  };
+  }
 
-  const onSubmit = (data: ActivityFormData) => {
+  function onSubmit(data: ActivityFormData) {
     if (editingActivityId) {
       dispatch(
         updateActivity({
@@ -110,18 +117,38 @@ export default function Day({ day, index, tripId }: DayProps) {
     setIsModalOpen(false);
     form.reset();
     setEditingActivityId(null);
-  };
+  }
 
-  const handleDeleteActivity = (activityId: string) => {
+  function handleDeleteActivity(activityId: string) {
     dispatch(deleteActivity({ tripId, dayId: day._id, activityId }));
-  };
+  }
 
-  const handleEditActivity = (activity: Activity) => {
+  function handleEditActivity(activity: Activity) {
     setIsModalOpen(true);
     setEditingActivityId(activity._id);
     form.setValue("name", activity.name);
     form.setValue("description", activity.description);
-  };
+  }
+
+  async function handleMoveActivityUp(activityId: string) {
+    try {
+      await dispatch(
+        moveActivityUp({ tripId, dayId: day._id, activityId })
+      ).unwrap();
+    } catch (error) {
+      console.error("Failed to move activity up:", error);
+    }
+  }
+
+  async function handleMoveActivityDown(activityId: string) {
+    try {
+      await dispatch(
+        moveActivityDown({ tripId, dayId: day._id, activityId })
+      ).unwrap();
+    } catch (error) {
+      console.error("Failed to move activity down:", error);
+    }
+  }
 
   return (
     <Accordion
@@ -143,18 +170,32 @@ export default function Day({ day, index, tripId }: DayProps) {
               <TableHeader>
                 {activities.map((activity) => (
                   <TableRow key={activity._id}>
-                    <TableHead>{activity.name}</TableHead>
+                    <TableHead>
+                      <FontAwesomeIcon
+                        icon={faCaretUp}
+                        onClick={() => handleMoveActivityUp(activity._id)}
+                        className="cursor-pointer mr-2"
+                      />
+                      <FontAwesomeIcon
+                        icon={faCaretDown}
+                        onClick={() => handleMoveActivityDown(activity._id)}
+                        className="cursor-pointer mr-2"
+                      />
+                      {activity.name}
+                    </TableHead>
                     <TableHead>{activity.description}</TableHead>
                     <TableHead className="text-right">
                       <div>
                         <FontAwesomeIcon
                           onClick={() => handleEditActivity(activity)}
                           icon={faEdit}
-                        />{" "}
+                          className="cursor-pointer mx-2"
+                        />
                         <FontAwesomeIcon
                           onClick={() => handleDeleteActivity(activity._id)}
                           icon={faTrashAlt}
-                        />{" "}
+                          className="cursor-pointer"
+                        />
                       </div>
                     </TableHead>
                   </TableRow>
