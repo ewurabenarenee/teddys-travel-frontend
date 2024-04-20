@@ -156,7 +156,7 @@ export default function TripPage({ params }: { params: { id: string } }) {
           </>
         )}
       </h1>
-      <div className="flex mx-6 mt-4 space-x-4 items-center">
+      <div className="flex mx-6 mt-4 md:space-x-4 space-y-2 flex-col md:flex-row items-center">
         <Button onClick={handleDelete}>Delete this trip</Button>
         <Collapsible open={isShareOpen} onOpenChange={setIsShareOpen}>
           <CollapsibleTrigger asChild>
