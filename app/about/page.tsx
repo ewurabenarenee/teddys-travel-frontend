@@ -32,9 +32,9 @@ export async function AboutPage() {
         one.
         <br />
         <br />
-        <h4 className="italic">
-          <b>"Teddy's Travel, your ultimate trip-planning companion".</b>
-        </h4>
+        <span className="italic font-bold">
+          "Teddy's Travel, your ultimate trip-planning companion".
+        </span>
       </p>
 
       <h1 className="mx-10 mb-4 text-4xl text-center italic">App Features</h1>
