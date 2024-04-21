@@ -165,7 +165,7 @@ function SignUp() {
                   <FormItem>
                     <FormLabel>Email address</FormLabel>
                     <FormControl>
-                      <Input placeholder="Sophie@hotmail.com" {...field} />
+                      <Input placeholder="sophie@hotmail.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

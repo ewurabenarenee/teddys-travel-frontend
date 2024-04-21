@@ -75,9 +75,9 @@ function SignIn() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username or Email</FormLabel>
+                    <FormLabel>Username or email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Renee@gmail.com" {...field} />
+                      <Input placeholder="renee@gmail.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
