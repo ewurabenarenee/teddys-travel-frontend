@@ -1,4 +1,5 @@
 "use client";
+
 import { AppDispatch, RootState } from "@/app/store/store";
 import {
   deleteTrip,
@@ -9,6 +10,8 @@ import {
 } from "@/app/store/tripSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
 import {
   faCheck,
   faPencilAlt,
@@ -52,6 +55,7 @@ export default function TripPage({ params }: { params: { id: string } }) {
   const [editingName, setEditingName] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const { toast } = useToast();
 
   const {
     control: shareControl,
@@ -87,7 +91,20 @@ export default function TripPage({ params }: { params: { id: string } }) {
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      dispatch(updateTripImage({ tripId: params.id, file }));
+      try {
+        await dispatch(updateTripImage({ tripId: params.id, file })).unwrap();
+        toast({
+          description: "Image uploaded successfully!",
+        });
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem uploading the image.",
+          action: <ToastAction altText="Try again">Try again</ToastAction>,
+        });
+      }
     }
   };
 
@@ -101,16 +118,29 @@ export default function TripPage({ params }: { params: { id: string } }) {
     setEditingName(false);
   };
 
-  const onShareSubmit = ({ recipientName, recipientEmail }) => {
-    dispatch(
-      shareTrip({
-        tripId: params.id,
-        recipientName,
-        recipientEmail,
-      })
-    );
-    setIsShareOpen(false);
-    resetShareForm();
+  const onShareSubmit = async ({ recipientName, recipientEmail }) => {
+    try {
+      await dispatch(
+        shareTrip({
+          tripId: params.id,
+          recipientName,
+          recipientEmail,
+        })
+      ).unwrap();
+      toast({
+        description: "Trip shared successfully!",
+      });
+      setIsShareOpen(false);
+      resetShareForm();
+    } catch (error) {
+      console.error("Error sharing trip:", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem sharing the trip.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+    }
   };
 
   if (loading) {
