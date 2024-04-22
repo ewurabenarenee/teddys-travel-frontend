@@ -27,12 +27,6 @@ const formSchema = z
     lastName: z.string().min(2, {
       message: "Last name must be at least 2 characters.",
     }),
-    occupation: z.string().min(2, {
-      message: "Occupation must be at least 2 characters.",
-    }),
-    phone: z.string().min(10, {
-      message: "Phone number must be at least 10 characters.",
-    }),
     email: z.string().email({
       message: "Invalid email address.",
     }),
@@ -54,8 +48,6 @@ function SignUp() {
     defaultValues: {
       firstName: "",
       lastName: "",
-      occupation: "",
-      phone: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -66,8 +58,6 @@ function SignUp() {
     const payload = {
       firstName: values.firstName,
       lastName: values.lastName,
-      occupation: values.occupation,
-      phone: values.phone,
       email: values.email,
       password: values.password,
       role: "user",
@@ -127,32 +117,6 @@ function SignUp() {
                     <FormLabel>Last name</FormLabel>
                     <FormControl>
                       <Input placeholder="Humbry" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="occupation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Occupation</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Teacher" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="+31-6543-1198" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
