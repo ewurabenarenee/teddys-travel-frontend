@@ -51,7 +51,12 @@ function Navbar() {
             )}
             {session && (
               <>
-                <span className="text-white">{session.user?.email}</span>
+                <Link
+                  href="/user/profile"
+                  className="text-white hover:underline"
+                >
+                  {session.user?.email}
+                </Link>
                 <Link
                   href="#"
                   onClick={handleLogout}
