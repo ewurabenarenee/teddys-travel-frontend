@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { User } from "next-auth";
 import { getSession } from "next-auth/react";
 
 interface UserState {
@@ -52,6 +53,30 @@ export const updateUser = createAsyncThunk<User, Partial<User>>(
   }
 );
 
+export const updateUserImage = createAsyncThunk<User, { file: File }>(
+  "user/updateUserImage",
+  async ({ file }) => {
+    const session = await getSession();
+    const token = session?.accessToken;
+    if (!token) {
+      throw new Error("Access token not found");
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(`http://localhost:3000/user/profile/picture`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+    const data = await response.json();
+    return data;
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -79,6 +104,18 @@ const userSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Something went wrong";
+      })
+      .addCase(updateUserImage.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserImage.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateUserImage.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Something went wrong";
       });
