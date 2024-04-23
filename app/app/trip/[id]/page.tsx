@@ -25,11 +25,13 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@radix-ui/react-collapsible";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod";
+import defaultTripImage from "../../assets/defaultTripImage.jpg";
 import BudgetCard from "../components/BudgetCard";
 import Day from "../components/Day";
 import WeatherCard from "../components/WeatherCard";
@@ -152,111 +154,123 @@ export default function TripPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <>
-      <h1 className="m-10 pt-6 flex justify-center items-center font-bold">
-        Your Trip To{" "}
-        {editingName ? (
-          <form
-            onSubmit={handleTripNameSubmit(handleSaveName)}
-            className="flex items-center"
-          >
-            <Controller
-              name="tripName"
-              control={tripNameControl}
-              defaultValue={trip?.name || ""}
-              render={({ field }) => (
-                <Input {...field} type="text" className="w-auto ml-2" />
-              )}
-            />
-            <button type="submit" className="ml-2">
-              <FontAwesomeIcon
-                icon={faCheck}
-                className="cursor-pointer text-green-500 w-4 h-4"
-              />
-            </button>
-          </form>
-        ) : (
-          <>
-            {trip?.name}
-            <FontAwesomeIcon
-              icon={faPencilAlt}
-              className="ml-2 cursor-pointer text-blue-500 w-4 h-4"
-              onClick={() => setEditingName(true)}
-            />
-          </>
-        )}
-      </h1>
-      <div className="flex mx-6 mt-4 md:space-x-4 space-y-2 flex-col md:flex-row items-center">
-        <Button onClick={handleDelete}>Delete this trip</Button>
-        <Collapsible open={isShareOpen} onOpenChange={setIsShareOpen}>
-          <CollapsibleTrigger asChild>
-            <button className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faShare} className="w-4 h-4" /> Share Trip
-            </button>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
+    <div className="relative">
+      <div className="fixed inset-0 overflow-hidden -z-10">
+        <Image
+          className="object-cover w-full h-full blur-md"
+          src={trip?.imageUrl || defaultTripImage}
+          alt="Trip Image"
+          fill
+        />
+        <div className="absolute inset-0 bg-secondary opacity-75"></div>
+      </div>
+      <div className="relative pt-6 text-primary-background overflow-auto">
+        <h1 className="m-10 flex justify-center items-center font-bold">
+          Your Trip To{" "}
+          {editingName ? (
             <form
-              onSubmit={handleShareSubmit(onShareSubmit)}
-              className="flex flex-col gap-2"
+              onSubmit={handleTripNameSubmit(handleSaveName)}
+              className="flex items-center"
             >
               <Controller
-                name="recipientName"
-                control={shareControl}
-                defaultValue=""
+                name="tripName"
+                control={tripNameControl}
+                defaultValue={trip?.name || ""}
                 render={({ field }) => (
-                  <Input {...field} placeholder="Recipient Name" />
+                  <Input {...field} type="text" className="w-auto ml-2" />
                 )}
               />
-              <Controller
-                name="recipientEmail"
-                control={shareControl}
-                defaultValue=""
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="email"
-                    placeholder="Recipient Email"
-                  />
-                )}
-              />
-              <Button type="submit">Send Invite</Button>
-            </form>
-          </CollapsibleContent>
-        </Collapsible>
-        <Collapsible open={isUploadOpen} onOpenChange={setIsUploadOpen}>
-          <CollapsibleTrigger asChild>
-            <button className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faUpload} className="w-4 h-4" /> Upload a
-              Cover Picture For the Dashboard
-            </button>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <div className="mt-4">
-              <div className="grid w-full max-w-sm font-bold items-center gap-1.5">
-                <Input
-                  id="picture"
-                  type="file"
-                  onChange={handleImageUpload}
-                  accept="image/*"
+              <button type="submit" className="ml-2">
+                <FontAwesomeIcon
+                  icon={faCheck}
+                  className="cursor-pointer text-green-500 w-4 h-4"
                 />
+              </button>
+            </form>
+          ) : (
+            <>
+              {trip?.name}
+              <FontAwesomeIcon
+                icon={faPencilAlt}
+                className="ml-2 cursor-pointer text-blue-500 w-4 h-4"
+                onClick={() => setEditingName(true)}
+              />
+            </>
+          )}
+        </h1>
+        <div className="flex mx-6 mt-4 md:space-x-4 space-y-2 flex-col md:flex-row items-center">
+          <Button onClick={handleDelete}>Delete this trip</Button>
+          <Collapsible open={isShareOpen} onOpenChange={setIsShareOpen}>
+            <CollapsibleTrigger asChild>
+              <button className="flex items-center gap-2">
+                <FontAwesomeIcon icon={faShare} className="w-4 h-4" /> Share
+                Trip
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <form
+                onSubmit={handleShareSubmit(onShareSubmit)}
+                className="flex flex-col gap-2"
+              >
+                <Controller
+                  name="recipientName"
+                  control={shareControl}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <Input {...field} placeholder="Recipient Name" />
+                  )}
+                />
+                <Controller
+                  name="recipientEmail"
+                  control={shareControl}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="Recipient Email"
+                    />
+                  )}
+                />
+                <Button type="submit">Send Invite</Button>
+              </form>
+            </CollapsibleContent>
+          </Collapsible>
+          <Collapsible open={isUploadOpen} onOpenChange={setIsUploadOpen}>
+            <CollapsibleTrigger asChild>
+              <button className="flex items-center gap-2">
+                <FontAwesomeIcon icon={faUpload} className="w-4 h-4" /> Upload a
+                Cover Picture For the Dashboard
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="mt-4">
+                <div className="grid w-full max-w-sm font-bold items-center gap-1.5">
+                  <Input
+                    id="picture"
+                    type="file"
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                  />
+                </div>
               </div>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
-      <div className="flex flex-col md:flex-row gap-10 m-6">
-        <div className="flex-1 md:w-3/4">
-          {sortedDays.map((day, index) => (
-            <div key={day._id} className="h-auto max-w-full rounded-lg">
-              <Day day={day} index={index} tripId={params.id} />
-            </div>
-          ))}
+            </CollapsibleContent>
+          </Collapsible>
         </div>
-        <div className="md:w-1/4">
-          <WeatherCard places={trip?.places || []} />
-          <BudgetCard budget={trip?.budget} tripId={params.id} />
+        <div className="flex flex-col md:flex-row gap-10 m-6">
+          <div className="flex-1 md:w-3/4">
+            {sortedDays.map((day, index) => (
+              <div key={day._id} className="h-auto max-w-full rounded-lg">
+                <Day day={day} index={index} tripId={params.id} />
+              </div>
+            ))}
+          </div>
+          <div className="md:w-1/4">
+            <WeatherCard places={trip?.places || []} />
+            <BudgetCard budget={trip?.budget} tripId={params.id} />
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -170,7 +170,7 @@ export default function Day({ day, index, tripId }: DayProps) {
               <TableHeader>
                 {activities.map((activity) => (
                   <TableRow key={activity._id}>
-                    <TableHead>
+                    <TableHead className="text-primary-background">
                       <FontAwesomeIcon
                         icon={faCaretUp}
                         onClick={() => handleMoveActivityUp(activity._id)}
@@ -183,8 +183,10 @@ export default function Day({ day, index, tripId }: DayProps) {
                       />
                       {activity.name}
                     </TableHead>
-                    <TableHead>{activity.description}</TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="text-primary-background">
+                      {activity.description}
+                    </TableHead>
+                    <TableHead className="text-right text-primary-background">
                       <div>
                         <FontAwesomeIcon
                           onClick={() => handleEditActivity(activity)}
@@ -211,7 +213,7 @@ export default function Day({ day, index, tripId }: DayProps) {
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <Table>
                   <TableRow>
-                    <TableHead>
+                    <TableHead className="text-primary-background">
                       <FormField
                         control={form.control}
                         name="name"
@@ -226,7 +228,7 @@ export default function Day({ day, index, tripId }: DayProps) {
                         )}
                       />
                     </TableHead>
-                    <TableHead>
+                    <TableHead className="text-primary-background">
                       <FormField
                         control={form.control}
                         name="description"

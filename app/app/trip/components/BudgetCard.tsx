@@ -100,7 +100,7 @@ function BudgetCard({
   }
 
   return (
-    <Card className="max-w-sm mb-2 cursor-pointer relative">
+    <Card className="max-w-sm mb-2 cursor-pointer relative bg-secondary">
       <div className="relative">
         <div className="text-center justify-center m-2 p-2">
           <h2 className="text-lg font-semibold">Your trip's budget</h2>
