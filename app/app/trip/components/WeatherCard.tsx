@@ -19,6 +19,7 @@ export default function WeatherCard({ places }: WeatherCardProps) {
           `${process.env.NEXT_PUBLIC_API_URL}/weather/${places[currentPlaceIndex]}`
         );
         const data = await response.json();
+        console.log(`Weather data for ${places[currentPlaceIndex]}:`, data);
         setWeatherData(data);
       }
     }
@@ -48,32 +49,40 @@ export default function WeatherCard({ places }: WeatherCardProps) {
           </h2>
         </div>
 
-        {weatherData ? (
-          <div className="flex flex-col items-center m-2">
-            <table className="w-full">
-              <tbody>
-                <tr>
-                  <td className="text-left ">Current Temperature:</td>
-                  <td className="text-right">{weatherData.currentTemp}°C</td>
-                </tr>
-                <tr>
-                  <td className="text-left">Tomorrow:</td>
-                  <td className="text-right">
-                    {weatherData.next2DaysTemp[0]}°C
-                  </td>
-                </tr>
-                <tr>
-                  <td className="text-left">The Day after Tomorrow:</td>
-                  <td className="text-right">
-                    {weatherData.next2DaysTemp[1]}°C
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p className="text-center">Loading weather data...</p>
-        )}
+        <div className="h-28">
+          {weatherData ? (
+            weatherData.currentTemp !== null ? (
+              <div className="flex flex-col items-center m-2">
+                <table className="w-full">
+                  <tbody>
+                    <tr>
+                      <td className="text-left">Current Temperature:</td>
+                      <td className="text-right">
+                        {weatherData.currentTemp}°C
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="text-left">Tomorrow:</td>
+                      <td className="text-right">
+                        {weatherData.next2DaysTemp[0]}°C
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="text-left">The Day after Tomorrow:</td>
+                      <td className="text-right">
+                        {weatherData.next2DaysTemp[1]}°C
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-center m-auto">Weather data unavailable</p>
+            )
+          ) : (
+            <p className="text-center m-auto">Loading weather data...</p>
+          )}
+        </div>
       </div>
     </Card>
   );
