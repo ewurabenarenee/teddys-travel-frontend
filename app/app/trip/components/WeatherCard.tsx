@@ -49,7 +49,7 @@ export default function WeatherCard({ places }: WeatherCardProps) {
           </h2>
         </div>
 
-        <div className="h-28">
+        <div className="min-h-28">
           {weatherData ? (
             weatherData.currentTemp !== null ? (
               <div className="flex flex-col items-center m-2">
