@@ -79,10 +79,7 @@ export async function AboutPage() {
               />
               <CardTitle className="my-2">Weather</CardTitle>
               We've got you covered with all the weather forecast details
-              tailored specifically to your trip. Whether you're planning a
-              weekend getaway or a month-long adventure, we'll provide you with
-              up-to-date forecasts so you can pack accordingly and make the most
-              of your journey.
+              tailored specifically to your trip.
             </div>
           </Card>
 

@@ -232,7 +232,7 @@ export default function TripPage({ params }: { params: { id: string } }) {
                     />
                   )}
                 />
-                <Button type="submit">Send Invite</Button>
+                <Button type="submit">Share Trip</Button>
               </form>
             </CollapsibleContent>
           </Collapsible>
