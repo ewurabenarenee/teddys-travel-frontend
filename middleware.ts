@@ -20,5 +20,5 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  matcher: protectedRoutes.map((route) => `${route}/:path*`),
+  matcher: ["/app/:path*", "/user/:path*"],
 };
