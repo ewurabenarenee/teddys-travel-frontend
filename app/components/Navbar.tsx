@@ -12,14 +12,30 @@ import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import defaultProfileImage from "../user/profile/assets/teddyProfile.jpg";
 
 function Navbar() {
   const { setTheme } = useTheme();
   const { data: session } = useSession();
+  const user = useSelector((state: RootState) => state.user.user);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageUrl, setImageUrl] = useState(user?.profilePictureUrl || "");
 
-  const handleLogout = () => {
+  useEffect(() => {
+    if (user?.profilePictureUrl) {
+      setImageUrl(user.profilePictureUrl);
+    } else {
+      setImageUrl(defaultProfileImage);
+      setImageLoaded(true);
+    }
+  }, [user]);
+
+  function handleLogout() {
     signOut({ callbackUrl: process.env.NEXTAUTH_URL });
-  };
+  }
 
   return (
     <>
@@ -52,17 +68,26 @@ function Navbar() {
             {session && (
               <>
                 <Link
-                  href="/user/profile"
-                  className="text-white hover:underline"
-                >
-                  {session.user?.email}
-                </Link>
-                <Link
                   href="#"
                   onClick={handleLogout}
                   className="text-white hover:underline"
                 >
                   Logout
+                </Link>
+                <Link href="/user/profile">
+                  {!imageLoaded && (
+                    <div className="w-8 h-8 rounded-full bg-primary-foreground"></div>
+                  )}
+                  <Image
+                    className={`w-8 h-8 rounded-full ${
+                      imageLoaded ? "" : "hidden"
+                    }`}
+                    src={imageUrl}
+                    alt="Profile Picture"
+                    width={32}
+                    height={32}
+                    onLoad={() => setImageLoaded(true)}
+                  />
                 </Link>
               </>
             )}
