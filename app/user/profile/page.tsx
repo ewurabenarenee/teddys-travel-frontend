@@ -62,6 +62,8 @@ export default function Profile() {
   const loading = useSelector((state: RootState) => state.user.loading);
   const error = useSelector((state: RootState) => state.user.error);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageUrl, setImageUrl] = useState(user?.profilePictureUrl || "");
   const { toast } = useToast();
 
   const form = useForm<UserFormData>({
@@ -73,6 +75,15 @@ export default function Profile() {
       confirmPassword: "",
     },
   });
+
+  useEffect(() => {
+    if (user?.profilePictureUrl) {
+      setImageUrl(user.profilePictureUrl);
+    } else {
+      setImageUrl(defaultProfileImage);
+      setImageLoaded(true);
+    }
+  }, [user]);
 
   useEffect(() => {
     dispatch(fetchUserProfile());
@@ -121,12 +132,16 @@ export default function Profile() {
         <div>
           <div className="flex justify-center">
             <div className="p-6">
+              {!imageLoaded && (
+                <div className="w-44 h-44 rounded-full bg-primary-foreground"></div>
+              )}
               <Image
-                className="rounded-full"
-                src={user?.profilePictureUrl || defaultProfileImage}
+                className={`rounded-full ${imageLoaded ? "" : "hidden"}`}
+                src={imageUrl}
                 alt="Profile Image"
                 width={180}
                 height={180}
+                onLoad={() => setImageLoaded(true)}
               />
             </div>
           </div>
