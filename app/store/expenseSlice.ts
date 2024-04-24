@@ -28,7 +28,7 @@ export const fetchExpenses = createAsyncThunk<Expense[], string>(
       throw new Error("Access token not found");
     }
     const response = await fetch(
-      `http://localhost:3000/trip/${tripId}/expense`,
+      `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}/expense`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -50,14 +50,17 @@ export const createExpense = createAsyncThunk<
   if (!token) {
     throw new Error("Access token not found");
   }
-  const response = await fetch(`http://localhost:3000/trip/${tripId}/expense`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(expenseData),
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}/expense`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(expenseData),
+    }
+  );
   const data = await response.json();
   return data;
 });
@@ -71,12 +74,15 @@ export const deleteExpense = createAsyncThunk<
   if (!token) {
     throw new Error("Access token not found");
   }
-  await fetch(`http://localhost:3000/trip/${tripId}/expense/${expenseId}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}/expense/${expenseId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 });
 
 const expenseSlice = createSlice({

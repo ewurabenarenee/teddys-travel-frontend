@@ -22,11 +22,14 @@ export const fetchUserProfile = createAsyncThunk<User>(
     if (!token) {
       throw new Error("Access token not found");
     }
-    const response = await fetch(`http://localhost:3000/user/profile`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/user/profile`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     const data = await response.json();
     return data;
   }
@@ -40,14 +43,17 @@ export const updateUser = createAsyncThunk<User, Partial<User>>(
     if (!token) {
       throw new Error("Access token not found");
     }
-    const response = await fetch(`http://localhost:3000/user/profile`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(userData),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/user/profile`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(userData),
+      }
+    );
     const data = await response.json();
     return data;
   }
@@ -65,13 +71,16 @@ export const updateUserImage = createAsyncThunk<User, { file: File }>(
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch(`http://localhost:3000/user/profile/picture`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/user/profile/picture`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
     const data = await response.json();
     return data;
   }

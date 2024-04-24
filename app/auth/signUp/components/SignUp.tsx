@@ -63,7 +63,7 @@ function SignUp() {
       role: "user",
     };
 
-    const res = await fetch(`${process.env.API_URL}/user/create`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

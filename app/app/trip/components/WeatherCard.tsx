@@ -16,7 +16,7 @@ export default function WeatherCard({ places }: WeatherCardProps) {
     async function fetchWeatherData() {
       if (places.length > 0) {
         const response = await fetch(
-          `http://localhost:3000/weather/${places[currentPlaceIndex]}`
+          `${process.env.NEXT_PUBLIC_API_URL}/weather/${places[currentPlaceIndex]}`
         );
         const data = await response.json();
         setWeatherData(data);

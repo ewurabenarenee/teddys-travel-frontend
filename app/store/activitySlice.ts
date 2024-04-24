@@ -29,7 +29,7 @@ export const fetchActivities = createAsyncThunk<
     throw new Error("Access token not found");
   }
   const response = await fetch(
-    `http://localhost:3000/trip/${tripId}/day/${dayId}/activity`,
+    `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}/day/${dayId}/activity`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ export const createActivity = createAsyncThunk<
     throw new Error("Access token not found");
   }
   const response = await fetch(
-    `http://localhost:3000/trip/${tripId}/day/${dayId}/activity`,
+    `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}/day/${dayId}/activity`,
     {
       method: "POST",
       headers: {
@@ -81,7 +81,7 @@ export const updateActivity = createAsyncThunk<
       throw new Error("Access token not found");
     }
     const response = await fetch(
-      `http://localhost:3000/trip/${tripId}/day/${dayId}/activity/${activityId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}/day/${dayId}/activity/${activityId}`,
       {
         method: "PUT",
         headers: {
@@ -106,7 +106,7 @@ export const deleteActivity = createAsyncThunk<
     throw new Error("Access token not found");
   }
   await fetch(
-    `http://localhost:3000/trip/${tripId}/day/${dayId}/activity/${activityId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}/day/${dayId}/activity/${activityId}`,
     {
       method: "DELETE",
       headers: {
@@ -126,7 +126,7 @@ export const moveActivityUp = createAsyncThunk<
     throw new Error("Access token not found");
   }
   await fetch(
-    `http://localhost:3000/trip/${tripId}/day/${dayId}/activity/${activityId}/move-up`,
+    `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}/day/${dayId}/activity/${activityId}/move-up`,
     {
       method: "PUT",
       headers: {
@@ -146,7 +146,7 @@ export const moveActivityDown = createAsyncThunk<
     throw new Error("Access token not found");
   }
   await fetch(
-    `http://localhost:3000/trip/${tripId}/day/${dayId}/activity/${activityId}/move-down`,
+    `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}/day/${dayId}/activity/${activityId}/move-down`,
     {
       method: "PUT",
       headers: {

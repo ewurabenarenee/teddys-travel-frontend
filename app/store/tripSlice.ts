@@ -30,13 +30,16 @@ export const updateTripImage = createAsyncThunk<
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch(`http://localhost:3000/trip/${tripId}/image`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}/image`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    }
+  );
   const data = await response.json();
   return data;
 });
@@ -49,7 +52,7 @@ export const fetchTrips = createAsyncThunk<Trip[]>(
     if (!token) {
       throw new Error("Access token not found");
     }
-    const response = await fetch(`http://localhost:3000/trip`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/trip`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -67,11 +70,14 @@ export const fetchTrip = createAsyncThunk<Trip>(
     if (!token) {
       throw new Error("Access token not found");
     }
-    const response = await fetch(`http://localhost:3000/trip/${tripId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     const data = await response.json();
     return data;
   }
@@ -85,12 +91,15 @@ export const deleteTrip = createAsyncThunk<Trip>(
     if (!token) {
       throw new Error("Access token not found");
     }
-    const response = await fetch(`http://localhost:3000/trip/${tripId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     const data = await response.json();
     return data;
   }
@@ -105,14 +114,17 @@ export const updateTrip = createAsyncThunk<
   if (!token) {
     throw new Error("Access token not found");
   }
-  const response = await fetch(`http://localhost:3000/trip/${tripId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(tripData),
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(tripData),
+    }
+  );
   const data = await response.json();
   return data;
 });
@@ -125,7 +137,7 @@ export const createTrip = createAsyncThunk<Trip, Partial<Trip>>(
     if (!token) {
       throw new Error("Access token not found");
     }
-    const response = await fetch(`http://localhost:3000/trip`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/trip`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -147,14 +159,17 @@ export const shareTrip = createAsyncThunk<
   if (!token) {
     throw new Error("Access token not found");
   }
-  const response = await fetch(`http://localhost:3000/trip/${tripId}/share`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ recipientName, recipientEmail }),
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/trip/${tripId}/share`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ recipientName, recipientEmail }),
+    }
+  );
   if (!response.ok) {
     throw new Error("Failed to share the trip");
   }

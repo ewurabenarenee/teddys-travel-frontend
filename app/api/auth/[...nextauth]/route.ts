@@ -12,11 +12,14 @@ const handler = NextAuth({
           password: string;
         };
 
-        const res = await fetch(`${process.env.API_URL}/auth/login`, {
-          method: "POST",
-          body: JSON.stringify({ email, password }),
-          headers: { "Content-Type": "application/json" },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+          {
+            method: "POST",
+            body: JSON.stringify({ email, password }),
+            headers: { "Content-Type": "application/json" },
+          }
+        );
 
         const user = await res.json();
 
