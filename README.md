@@ -10,6 +10,8 @@ If this is your first time running the application, install dependencies using
 npm i
 ```
 
+Create a `.env` file based on `.env.example`.
+
 To start the development server, run
 
 ```
@@ -17,5 +19,3 @@ npm run dev
 ```
 
 The application should now be available under `http://localhost:3000`.
-
-**Please note that this is currently just a prototype, no functionality or data persistance have been implemented yet!**
